@@ -1,4 +1,4 @@
-FROM node:14.16.0-buster as build
+FROM node:14.16.0-buster as build-app
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json yarn.lock .env.development .env.production ./
@@ -7,8 +7,7 @@ COPY src ./src
 COPY public ./public
 RUN yarn build
 
-FROM nginx:latest
+FROM nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/build /usr/share/nginx/html
-
+COPY --from=build-app /app/build /usr/share/nginx/html
 EXPOSE 80
